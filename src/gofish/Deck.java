@@ -15,17 +15,18 @@ import javafx.scene.image.ImageView;
  * @author Joseph
  */
 public class Deck {
-    private DeckTest ui;
     private ArrayList<Card> cards;
     private String imagesPath = "./images";
     private String ImgPath = "file:images/";
     private File folder;
     private File[] listOfImages;
+    
 
     /**
      * Constructor just creates a deck with 52 (or how ever many cards)
      */
     Deck() {
+        System.out.println("Inside deck");
         cards = new ArrayList<>();
         fillDeck();
     }
@@ -46,12 +47,19 @@ public class Deck {
         }
 
     }
+    public void createHand(){
+        
+    }
     /**
      * Remove a card from the deck
      * @param location 
+     * @param hand which pile to add it to after removing it
      */
-    public void removeCard(int location) {
+    public void removeCardAndAddToHand(int location,ArrayList<Card> hand) {
+//        if(cards.get(location).equals()){
+        hand.add(cards.get(location));
         cards.remove(location);
+//        }
         //add to player
     }
     /**
@@ -72,6 +80,9 @@ public class Deck {
      */
     public ArrayList<Card> getCards(){
         return this.cards;
+    }
+    public int sizeOfDeck(){
+        return this.cards.size();
     }
     /**
      * This will check whether the card is in the deck or not 
