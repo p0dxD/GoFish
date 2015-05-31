@@ -20,18 +20,18 @@ public class Card {
     Card(String name, ImageView image) {
         this.name = name;
         this.image = image;
-        this.state = false;
+        this.state = true;
     }
 
     Card() {
         this.name = null;
         this.image = new ImageView();
-        this.state = false;
+        this.state = true;
     }
     Card(String name) {
         this.name = name;
         this.image = new ImageView();
-        this.state = false;
+        this.state = true;
     }
 
     public String getName() {

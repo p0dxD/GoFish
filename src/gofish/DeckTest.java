@@ -17,22 +17,18 @@ import javafx.stage.Stage;
  */
 public class DeckTest extends Application {
     private String ImgPath = "file:images/";
-    private int width =800;
-    private int height = 600;
+    private int width =600;
+    private int height = 300;
+    private boolean won = false;
 //    public static Deck deck = new Deck();
     @Override
     public void start(Stage primaryStage) {
-        //deck = new Deck();
-//        initDeck();//initialized the deck
-//        System.out.println("Size: "+deck.sizeOfDeck());
-        Player player = new Player(2);
-        System.out.println("Size: "+player.getHandSize());
-        Player computer = new Player(2);
+//        Player player = new Player(2);
+//        System.out.println("Size: "+player.getHandSize());
+//        System.out.println("Score Computer: "+player.getScore());
+        Computer computer = new Computer(7);
         System.out.println("Size: "+computer.getHandSize());
-        Player player2 = new Player(2);
-        System.out.println("Size: "+player2.getHandSize());
-        Player player3 = new Player(2);
-        System.out.println("Size: "+player3.getHandSize());
+        System.out.println("Score Computer: "+computer.getScore());
         
 //        System.out.println("Size: "+deck.sizeOfDeck());
 //        int count = 1;
@@ -54,15 +50,25 @@ public class DeckTest extends Application {
 //        count++;
 //        }
 
+//        Playing_card_club_10
         
         Pane root = new Pane();
-        display(player3,player3.getHand(),root);
+        display(computer,computer.getHand(),root);
+        //PANE CLICK
         root.setOnMouseClicked(e->{
-        player3.addCardToHandFromDeck();
-        System.out.println("Size: "+player3.getHandSize());
-        System.out.println("Size deck: "+player3.getDeckSize());
-       display(player3,player3.getHand(),root);
-       player3.removeFromHand("3");
+//        player3.flipHand(player3.getHand());
+        System.out.println("Size deck: "+computer.getDeckSize());
+//        System.out.println("Size player: "+player.getHandSize());
+//        player.handAdditionFromOtherHand(player.getHand(),computer.getHand(),"Playing_card_club_10");
+        System.out.println("Size: "+computer.getHandSize());
+        System.out.println("Score com: "+computer.getScore());
+//        System.out.println("Score player: "+player.getScore());
+        computer.addCardToHandFromDeck();
+        computer.checkMatchingFour(computer.getHand());
+        System.out.println("won: "+won(computer));
+       display(computer,computer.getHand(),root);
+//        computer.increaseScore();
+//       computer.removeFromHand("3");
         });
             //TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSST
         /*
@@ -90,9 +96,12 @@ public class DeckTest extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    public void change(int i){
-        int j = i;
-    }
+/**
+ * temporary to display stuff on pane
+ * @param player
+ * @param cardsPlayer
+ * @param root 
+ */
 public void display(Player player,ArrayList<Card> cardsPlayer, Pane root){
     root.getChildren().clear();
             for(int i = 0;i < player.getHandSize();i++){
@@ -101,6 +110,11 @@ public void display(Player player,ArrayList<Card> cardsPlayer, Pane root){
         root.getChildren().addAll(cardsPlayer.get(i).getImage());
 //        cards.get(i).getImage().setOnMouseClicked(e->{change(i);});
         }
+}public boolean won(Player player){
+    if(player.getHand().isEmpty()&&player.getDeckSize()==0){
+        won = true;
+    }
+    return won;
 }
     /**
      * @param args the command line arguments

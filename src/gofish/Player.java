@@ -5,9 +5,13 @@
  */
 package gofish;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  *
@@ -20,13 +24,13 @@ public class Player {
     private Deck deck;
     private ArrayList<Card> hand;
     private int sizeOfHand;
+    private int score = 0;
 
     Player() {
         ui = new DeckTest();
         hand = new ArrayList<>();
         sizeOfHand = 7;
         deck = getInstance();
-//        System.out.println(deck.sizeOfDeck());
         fillHand();
     }
 
@@ -40,25 +44,43 @@ public class Player {
         hand = new ArrayList<>();
         this.sizeOfHand = sizeOfHand;
         deck = getInstance();
-//        System.out.println(deck.sizeOfDeck());
         fillHand();
     }
-//            fillhand
-//            
-//            have remove from hand, add to hand from this or the
-//                    computer deck
 
     /**
      * Fills up the initial hand with the size wanted
      */
     private void fillHand() {
-//        Random cardChooser = new Random();
-        //Collections.shuffle(deck.getCards());
+        Collections.shuffle(deck.getCards());
+//        deck.flipDeck(false);//flips to back 
         System.out.println("Inside fillhand: " + deck.sizeOfDeck());
         for (int i = 0; i < sizeOfHand; i++) {
             deck.removeCardAndAddToHand(i, hand);
         }
         System.out.println("Going out fillhand: " + deck.sizeOfDeck());
+    }
+
+    /**
+     * Mainly for the computer flips whole initial hand
+     *
+     * @param cards the hand to flip
+     */
+    public void flipHand(ArrayList<Card> cards) {
+        for (int i = 0; i < cards.size(); i++) {
+            if (cards.get(i).isFlipped() == true) {
+                if (cards.get(i).isFlipped()) {
+                    Image img = new Image(new File("back.jpg").toURI().toString());
+                    cards.get(i).setImage(new ImageView(img));
+                }
+            }
+        }
+    }
+
+    public void flipCard(Card card) {
+        if (card.isFlipped() == true) {
+            Image img = new Image(new File("back.jpg").toURI().toString());
+            card.setImage(new ImageView(img));
+        }
     }
 
     public ArrayList<Card> getHand() {
@@ -76,41 +98,48 @@ public class Player {
      * @param to where we are bringing the cards
      * @param cardToAdd name of the card (number) ex. "5"
      */
-    public void handAdditionFromOtherHand(ArrayList<Card> from, ArrayList<Card> to, String cardToAdd) {
-        for (int i = 0; i < from.size(); i++) {
-
-//        System.out.println("Names: "+ hand.get(i).getName());
-            if (from.get(i).getName().contains(cardToAdd)) {
+    public void handAdditionFromOtherHand(Player from, Player to, String cardToAdd) {
+        boolean itHadIt = false;
+        for (Card card : from.getHand()) {
+            if (card.getName().contains(cardToAdd)) {
+                to.getHand().add(card);
+                itHadIt = true;
+            } else {
+                System.out.println("Taken from Deck");
             }
-            to.add(from.get(i));
-            from.remove(i);
+        }
+        if (itHadIt == true) {
+            from.removeFromHand(cardToAdd);
         }
     }
 
     public void removeFromHand(String cardToRemove) {
-
-        System.out.println("Inside removeFromHand: " + getHandSize());
-        //hand.get(1).getName().contains(cardToRemove);
-        for (int i = 0; i < getHandSize(); i++) {
-
-//        System.out.println("Names: "+ hand.get(i).getName());
-            if (hand.get(i).getName().contains(cardToRemove)) {
-                hand.remove(hand.get(i));
-
-                System.out.println("It contains it");
-            } else {
-
-//        System.out.println("Removed nothing");
+        ArrayList<Card> temp = new ArrayList<>();
+//        System.out.println("Inside removeFromHand: " + getHandSize() + " " + cardToRemove);
+//        int loops = getHandSize();
+        for (Card card : getHand()) {
+            if (!card.getName().contains(cardToRemove)) {
+                temp.add(card);
             }
         }
+        hand = temp;
+//        System.out.println("Inside removeFromHand new: " + getHandSize());
     }
 
+    /**
+     * Adds a card from deck
+     */
     public void addCardToHandFromDeck() {
         if (deck.sizeOfDeck() != 0) {
             deck.removeCardAndAddToHand(deck.sizeOfDeck() - 1, hand);
         }
     }
 
+    /**
+     * Gets the current size of the deck
+     *
+     * @return deck size
+     */
     public int getDeckSize() {
         return deck.sizeOfDeck();
     }
@@ -126,5 +155,53 @@ public class Player {
             instance = new Deck();
         }
         return instance;
+    }
+
+    /**
+     * This will check if the hand has 4 cards of the same will add one to score
+     * if it does
+     *
+     * @param cards
+     * @param player
+     */
+    public void checkMatchingFour(ArrayList<Card> cards) {
+        System.out.println("Inside check");
+        String[] cardOptions = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+        int max = 4;//matches needed
+        final Map<String, Integer> countMap = new HashMap<>();
+//        for (int i = 2; i <= 10; i++) {//O(mn)
+        for (String cardNames : cardOptions) {
+            int count = 0;
+            for (int j = 0; j < getHandSize(); j++) {
+                if (countMap.containsKey(cardNames) && cards.get(j).getName().contains(cardNames)) {
+                    count = countMap.get(cardNames) + 1;
+                } else {
+                    count = 1;
+                }
+                if (cards.get(j).getName().contains(cardNames)) {
+                    countMap.put(cardNames, count);
+                }
+            }
+        }
+        for (Map.Entry<String, Integer> entry : countMap.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            if (value == max) {
+                System.out.print("Key: " + key);
+                removeFromHand(key);
+                System.out.println(" value " + value);
+                score++;
+            }
+        }
+//        }
+
+    }
+
+    public void increaseScore() {
+        score++;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

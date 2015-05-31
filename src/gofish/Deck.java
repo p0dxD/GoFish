@@ -42,13 +42,27 @@ public class Deck {
                 cards.add(new Card());
                 cards.get(i).setName(listOfImages[i].getName());
                 Image img = new Image(ImgPath + listOfImages[i].getName());
-                cards.get(i).setImage(new ImageView(img));
+                ImageView view = new ImageView(img);
+                view.setFitHeight(100);
+                view.setFitWidth(80);
+                cards.get(i).setImage(view);
             }
         }
 
     }
-    public void createHand(){
-        
+    /**
+     * 
+     * @param state true means head, false means back
+     */
+    public void flipDeck(boolean state){
+        if(state == false){
+        for(int i = 0;i < cards.size();i++){
+            if(cards.get(i).isFlipped()){
+                Image img = new Image(new File("back.jpg").toURI().toString());
+                cards.get(i).setImage(new ImageView(img));
+            }
+        }
+        }
     }
     /**
      * Remove a card from the deck
