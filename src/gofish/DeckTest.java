@@ -5,6 +5,7 @@
  */
 package gofish;
 
+import gofish.ui.GoFishUI;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -23,13 +24,15 @@ public class DeckTest extends Application {
 //    public static Deck deck = new Deck();
     @Override
     public void start(Stage primaryStage) {
+        GoFishUI go = new GoFishUI();
+        System.out.println(go.whoStarts());
 //        Player player = new Player(2);
 //        System.out.println("Size: "+player.getHandSize());
 //        System.out.println("Score Computer: "+player.getScore());
         Computer computer = new Computer(7);
         System.out.println("Size: "+computer.getHandSize());
         System.out.println("Score Computer: "+computer.getScore());
-        
+        System.out.println(computer.makeMove());
 //        System.out.println("Size: "+deck.sizeOfDeck());
 //        int count = 1;
 //        deck = new Deck();
@@ -63,8 +66,8 @@ public class DeckTest extends Application {
         System.out.println("Size: "+computer.getHandSize());
         System.out.println("Score com: "+computer.getScore());
 //        System.out.println("Score player: "+player.getScore());
-        computer.addCardToHandFromDeck();
-        computer.checkMatchingFour(computer.getHand());
+        computer.getCardToHandFromDeck();
+        computer.checkMatchingFour();
         System.out.println("won: "+won(computer));
        display(computer,computer.getHand(),root);
 //        computer.increaseScore();

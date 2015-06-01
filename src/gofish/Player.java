@@ -19,15 +19,17 @@ import javafx.scene.image.ImageView;
  */
 public class Player {
 
-    private DeckTest ui;
+//    private DeckTest ui;
     private static Deck instance = null;
     private Deck deck;
     private ArrayList<Card> hand;
     private int sizeOfHand;
     private int score = 0;
-
-    Player() {
-        ui = new DeckTest();
+    private boolean containsIt;
+    private boolean isOver = false;
+    
+    public Player() {
+//        ui = new DeckTest();
         hand = new ArrayList<>();
         sizeOfHand = 7;
         deck = getInstance();
@@ -39,8 +41,8 @@ public class Player {
      *
      * @param sizeOfHand size
      */
-    Player(int sizeOfHand) {
-        ui = new DeckTest();
+    public Player(int sizeOfHand) {
+//        ui = new DeckTest();
         hand = new ArrayList<>();
         this.sizeOfHand = sizeOfHand;
         deck = getInstance();
@@ -65,12 +67,15 @@ public class Player {
      *
      * @param cards the hand to flip
      */
-    public void flipHand(ArrayList<Card> cards) {
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).isFlipped() == true) {
-                if (cards.get(i).isFlipped()) {
+    public void flipHand() {
+        for (int i = 0; i < getHand().size(); i++) {
+            if (this.getHand().get(i).isFlipped() == true) {
+                if (this.getHand().get(i).isFlipped()) {
                     Image img = new Image(new File("back.jpg").toURI().toString());
-                    cards.get(i).setImage(new ImageView(img));
+                     ImageView view = new ImageView(img);
+                view.setFitHeight(100);
+                view.setFitWidth(80);
+                    this.getHand().get(i).setImage(view);
                 }
             }
         }
@@ -79,7 +84,10 @@ public class Player {
     public void flipCard(Card card) {
         if (card.isFlipped() == true) {
             Image img = new Image(new File("back.jpg").toURI().toString());
-            card.setImage(new ImageView(img));
+                            ImageView view = new ImageView(img);
+                view.setFitHeight(100);
+                view.setFitWidth(80);
+            card.setImage(view);
         }
     }
 
@@ -98,18 +106,18 @@ public class Player {
      * @param to where we are bringing the cards
      * @param cardToAdd name of the card (number) ex. "5"
      */
-    public void handAdditionFromOtherHand(Player from, Player to, String cardToAdd) {
+    public void handAdditionFromOtherHand(Player to, String cardToAdd) {
         boolean itHadIt = false;
-        for (Card card : from.getHand()) {
+        for (Card card : this.getHand()) {
             if (card.getName().contains(cardToAdd)) {
                 to.getHand().add(card);
                 itHadIt = true;
             } else {
-                System.out.println("Taken from Deck");
+                System.out.println("Taken from Deck not");
             }
         }
         if (itHadIt == true) {
-            from.removeFromHand(cardToAdd);
+            this.removeFromHand(cardToAdd);
         }
     }
 
@@ -129,7 +137,7 @@ public class Player {
     /**
      * Adds a card from deck
      */
-    public void addCardToHandFromDeck() {
+    public void getCardToHandFromDeck() {
         if (deck.sizeOfDeck() != 0) {
             deck.removeCardAndAddToHand(deck.sizeOfDeck() - 1, hand);
         }
@@ -142,6 +150,13 @@ public class Player {
      */
     public int getDeckSize() {
         return deck.sizeOfDeck();
+    }
+    /**
+     * Returns the deck 
+     * @return 
+     */
+    public Deck getDeck() {
+        return deck;
     }
 
     /**
@@ -164,7 +179,7 @@ public class Player {
      * @param cards
      * @param player
      */
-    public void checkMatchingFour(ArrayList<Card> cards) {
+    public void checkMatchingFour() {
         System.out.println("Inside check");
         String[] cardOptions = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
         int max = 4;//matches needed
@@ -173,12 +188,12 @@ public class Player {
         for (String cardNames : cardOptions) {
             int count = 0;
             for (int j = 0; j < getHandSize(); j++) {
-                if (countMap.containsKey(cardNames) && cards.get(j).getName().contains(cardNames)) {
+                if (countMap.containsKey(cardNames) && this.getHand().get(j).getName().contains(cardNames)) {
                     count = countMap.get(cardNames) + 1;
                 } else {
                     count = 1;
                 }
-                if (cards.get(j).getName().contains(cardNames)) {
+                if (this.getHand().get(j).getName().contains(cardNames)) {
                     countMap.put(cardNames, count);
                 }
             }
@@ -193,15 +208,28 @@ public class Player {
                 score++;
             }
         }
-//        }
 
     }
-
+    public boolean isItOver(){
+        if(this.getHand().isEmpty()&&this.getDeckSize()==0){
+            this.isOver = true;
+        }
+        return isOver;
+    }
     public void increaseScore() {
         score++;
     }
 
     public int getScore() {
         return score;
+    }
+    public boolean isInHand(String cardName){
+        containsIt = false;
+        for(Card card: this.getHand()){
+            if(card.getName().contains(cardName)){
+                containsIt = true;
+            }
+        }
+        return containsIt;
     }
 }

@@ -5,17 +5,32 @@
  */
 package gofish;
 
+import java.util.Random;
+
 /**
  *
  * @author Joseph
  */
 public class Computer extends Player{
-    Computer(int i){
+    public Computer(int i){
         super(i);
-        
+//        super.flipHand(super.getHand());
     }
     
-    public void makeMove(){
+    public String makeMove(){
+        String pick = null;
+        String[] cardOptions = {"A", "2", "3", "4", "5",
+            "6", "7", "8", "9", "10", "J", "Q", "K"};
+        int ran;
+        while(pick==null){
+            ran = new Random().nextInt(cardOptions.length-1);
+            System.out.println("Inside while "+ran);
+        if(super.isInHand(cardOptions[ran]))
+            pick = cardOptions[ran];
+        }
+        return pick;
+    }
+    public void askPlayer(){
         
     }
 }

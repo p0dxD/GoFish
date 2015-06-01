@@ -61,20 +61,4 @@ public class Card {
     public String toString(){
         return "name: " + this.name + "\nIs if flipped?  " + this.state;
     }
-    //Usage with two
-    public static void main(String[] args) {
-        Card[] cards = new Card[2];
-
-        for (int i = 0; i < cards.length; i++) {
-            cards[i] = new Card();
-            cards[i].setName("Carl");
-        }
-        
-            cards[1].setName("Ho");
-//        System.out.println("Name: " + cards[0].getName());
-        System.out.println("Is it flipped? " + cards[0].toString());
-        cards[0].flip(true);
-        System.out.println("Is it flipped? " + cards[1].toString());
-        System.out.println("Is it flipped? " + cards[0].toString());
-    }
 }

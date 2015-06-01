@@ -25,7 +25,7 @@ public class Deck {
     /**
      * Constructor just creates a deck with 52 (or how ever many cards)
      */
-    Deck() {
+    public Deck() {
         System.out.println("Inside deck");
         cards = new ArrayList<>();
         fillDeck();
@@ -36,7 +36,7 @@ public class Deck {
     public void fillDeck() {
         folder = new File(imagesPath);
         listOfImages = folder.listFiles();
-        System.out.println("Path: "+new File(listOfImages[0].getName()).toURI().toString());
+//        System.out.println("Path: "+new File(listOfImages[0].getName()).toURI().toString());
         for (int i = 0; i < listOfImages.length; i++) {
             if (listOfImages[i].isFile() && listOfImages[i].getName().startsWith("Playing")) {
                 cards.add(new Card());
@@ -59,7 +59,10 @@ public class Deck {
         for(int i = 0;i < cards.size();i++){
             if(cards.get(i).isFlipped()){
                 Image img = new Image(new File("back.jpg").toURI().toString());
-                cards.get(i).setImage(new ImageView(img));
+                ImageView view = new ImageView(img);
+                view.setFitHeight(100);
+                view.setFitWidth(80);
+                cards.get(i).setImage(view);
             }
         }
         }
