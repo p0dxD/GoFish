@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     static String title = "Go Fish";
-    static int width = 1000, heigth = 700;
+    static int width = 700, heigth = 500;
 
     @Override
     public void start(Stage primaryStage) {

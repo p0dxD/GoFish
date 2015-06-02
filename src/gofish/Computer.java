@@ -12,13 +12,17 @@ import java.util.Random;
  * @author Joseph
  */
 public class Computer extends Player{
+    private String pick = null, message = null;
+    public Computer(){
+        super();
+    }
     public Computer(int i){
         super(i);
-//        super.flipHand(super.getHand());
+        super.flipHand();
     }
     
     public String makeMove(){
-        String pick = null;
+        pick = null;
         String[] cardOptions = {"A", "2", "3", "4", "5",
             "6", "7", "8", "9", "10", "J", "Q", "K"};
         int ran;
@@ -30,7 +34,8 @@ public class Computer extends Player{
         }
         return pick;
     }
-    public void askPlayer(){
-        
+
+    public String message(){
+        return message;
     }
 }

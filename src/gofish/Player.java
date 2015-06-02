@@ -27,6 +27,7 @@ public class Player {
     private int score = 0;
     private boolean containsIt;
     private boolean isOver = false;
+    private boolean isTurn = false;
     
     public Player() {
 //        ui = new DeckTest();
@@ -106,14 +107,12 @@ public class Player {
      * @param to where we are bringing the cards
      * @param cardToAdd name of the card (number) ex. "5"
      */
-    public void handAdditionFromOtherHand(Player to, String cardToAdd) {
+    public void addCardsFromOneHandToTheOther(Player to, String cardToAdd) {
         boolean itHadIt = false;
         for (Card card : this.getHand()) {
             if (card.getName().contains(cardToAdd)) {
                 to.getHand().add(card);
                 itHadIt = true;
-            } else {
-                System.out.println("Taken from Deck not");
             }
         }
         if (itHadIt == true) {
@@ -231,5 +230,19 @@ public class Player {
             }
         }
         return containsIt;
+    }
+    /**
+     * Sets if its the player turn or not
+     * @param isTurn 
+     */
+    public void setIsTurn(boolean isTurn){
+        this.isTurn =isTurn;
+    }
+    /**
+     * Returns the state of player turn
+     * @return is it is turn
+     */
+    public boolean isTurn(){
+        return isTurn;
     }
 }

@@ -67,7 +67,7 @@
 }
 
 .label:hover {
-  -fx-text-fill: -my-hover-color;
+  -fx-text-fill: #0093EF;
   -fx-font-style: italic;
   -fx-cursor: hand;
 }

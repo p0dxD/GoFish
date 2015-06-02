@@ -62,7 +62,7 @@ public class DeckTest extends Application {
 //        player3.flipHand(player3.getHand());
         System.out.println("Size deck: "+computer.getDeckSize());
 //        System.out.println("Size player: "+player.getHandSize());
-//        player.handAdditionFromOtherHand(player.getHand(),computer.getHand(),"Playing_card_club_10");
+//        player.addCardsFromOneHandToTheOther(player.getHand(),computer.getHand(),"Playing_card_club_10");
         System.out.println("Size: "+computer.getHandSize());
         System.out.println("Score com: "+computer.getScore());
 //        System.out.println("Score player: "+player.getScore());

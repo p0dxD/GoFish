@@ -10,8 +10,10 @@ import gofish.Computer;
 import gofish.Player;
 import java.io.File;
 import java.util.Random;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -19,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -28,27 +31,32 @@ import javafx.stage.Stage;
  * @author Joseph
  */
 public class GoFishUI {
+
     //For ui
 //    private static BorderPane instance = null;
     //Panes used 
     private BorderPane mainPane = null;
     private Pane splashScreenPane;
     private BorderPane gamePane;
-    private HBox playerBox;
-    private HBox computerBox;
+    private StackPane playerPane;
+    private StackPane computerPane;
     private Pane askPane;
-    private Pane deckPane;
+    private StackPane deckPane;
     private BorderPane aboutPane;
     // mainStage
     private Stage primaryStage;
     private int paneWidth, paneHeight;
     //Buttons
-    private Button play, exit, about, askComputerButton;
+    private Button play, exit, about;//for splash
+    private Button askComputerButton, yesBtn, gofishBtn;//buttons for in game
     //TextBoxes 
     private TextField decisionBoxTextField;
     //Players 
     private Player human;
     private Computer computer;
+    //labels
+    private Label computerLabel;
+    private Label playerLabel;
     //Variables in game
     private int numberOfCardsPerPlayer = 7;
     //Event handler for buttons 
@@ -56,7 +64,10 @@ public class GoFishUI {
     //To view the about 
     private WebView browser;
     private WebEngine webEngine;
-    
+    //turn
+    private String whoseTurn;
+    //state of game
+    private boolean isOver = false;
 
     /**
      * Default constructor
@@ -84,10 +95,12 @@ public class GoFishUI {
         this.initSplashScreen();
 //        initPlayers();
     }
-    public void initHandler(){
+
+    public void initHandler() {
         System.out.println("Inside initHandler");
         eventHandler = new EventHandler(this);
     }
+
     /**
      * Inits the initial stage
      */
@@ -131,6 +144,7 @@ public class GoFishUI {
         //Sets the action for play button
         play.setOnMouseClicked(e -> {
             eventHandler.requestToPlay();
+            eventHandler.startGame(this.whoStarts());
         });
         //sets the action for about button
         about.setOnMouseClicked(e -> {
@@ -149,56 +163,70 @@ public class GoFishUI {
      * initializes the game screen
      */
     public void initGameScreen() {
+        whoseTurn = this.whoStarts();
         System.out.println("Inside initGameScreen");
-        deckPane = new Pane();
+        deckPane = new StackPane();
+//        deckPane.setAlignment(Pos.);
         gamePane = new BorderPane();
         askPane = new Pane();
         askComputerButton = new Button("Ask");
-        playerBox = new HBox();//to store the player cards
-        computerBox = new HBox();//to store the computer cards
-        decisionBoxTextField = new TextField("input choice here");
+        playerPane = new StackPane();//to store the player cards
+//        playerPane.setMaxSize(paneWidth, paneHeight);
+        computerPane = new StackPane();//to store the computer cards
+        decisionBoxTextField = new TextField("ex.\"Q\"");
+        computerLabel = new Label("Here will appear what the computer says");
+        playerLabel = new Label("Here will appear what the player says");
+        yesBtn = new Button("YES");
+        gofishBtn = new Button("GoFish");
         human = new Player(numberOfCardsPerPlayer);//initialize(player)
         computer = new Computer(numberOfCardsPerPlayer);//initialize(computer)
         //to initialy display cards
-        displayCards(playerBox, human, "human");
-        displayCards(computerBox, computer, "Computer");
+        displayCards(playerPane, human, "human");
+        displayCards(computerPane, computer, "Computer");
         updateDeck(deckPane, computer);
         //The button ask and the textField
-        decisionBoxTextField.setTranslateX((this.getWidth() / 2));
+        playerLabel.setTranslateX((this.getWidth() / 2 - 200));
+        playerLabel.setTranslateY(this.getHeigth() - 300);
+        computerLabel.setTranslateX((this.getWidth() / 2 - 100));
+        computerLabel.setTranslateY(this.getHeigth() - 440);
+        yesBtn.setTranslateX((this.getWidth() / 2) + 200);
+        yesBtn.setTranslateY(this.getHeigth() - 440);
+        gofishBtn.setTranslateX((this.getWidth() / 2) + 150);
+        gofishBtn.setTranslateY(this.getHeigth() - 440);
         askComputerButton.setTranslateX((this.getWidth() / 2) + 200);
         askComputerButton.setTranslateY(this.getHeigth() - 300);
+        decisionBoxTextField.setTranslateX((this.getWidth() / 150));
         decisionBoxTextField.setTranslateY(this.getHeigth() - 300);
-        askPane.getChildren().addAll(askComputerButton, decisionBoxTextField);
+        decisionBoxTextField.setPrefSize(50, 15);
+            
+        decisionBoxTextField.requestFocus();
+        askPane.getChildren().addAll(askComputerButton, decisionBoxTextField,
+                yesBtn, gofishBtn, computerLabel, playerLabel);
         //This is for the ask button
         askComputerButton.setOnMouseClicked(e -> {
-            if (computer.isInHand(decisionBoxTextField.getText())) {
-                computer.handAdditionFromOtherHand(human, decisionBoxTextField.getText());
-                displayCards(playerBox, human, "human");
-                displayCards(computerBox, computer, "computer");
-            } else {
-                System.out.println("It was not, pick a card from deck");
-                askComputerButton.setDisable(true);
-            }
-        });
+
+        });//ASK BUTTON
         //set gamePane click action
         deckPane.setOnMouseClicked(e -> {
-            human.getCardToHandFromDeck();
-            human.checkMatchingFour();
-//        computer.getCardToHandFromDeck();
-            displayCards(playerBox, human, "human");
-            displayCards(computerBox, computer, "computer");
-            updateDeck(deckPane, computer);
+//        human.getCardToHandFromDeck();
+//        displayCards(playerPane, human, "human");
+        });//DECK PANE LEFT SIDE
+        yesBtn.setOnMouseClicked(e -> {
+
+        });//YES BUTTON
+        gofishBtn.setOnMouseClicked(e -> {
 
         });
-        gamePane.setLeft(deckPane);
-        gamePane.setCenter(askPane);
-        gamePane.setBottom(playerBox);
-        gamePane.setTop(computerBox);
+        gamePane.setLeft(deckPane);//DECK ON LEFT
+        gamePane.setCenter(askPane);//THE INFORMATION AND ASK BUTTONS IN CENTER
+        gamePane.setBottom(playerPane);//THE PLAYER 
+        gamePane.setTop(computerPane);
+
         this.getMainPane().setCenter(gamePane);
     }
 
     /**
-     * Initializes the players with on screen cards
+     * Initializes the players with on screen cards, for later
      */
     public void initPlayers() {
         System.out.println("Inside initPlayers");
@@ -232,18 +260,26 @@ public class GoFishUI {
      * @param pane where we put them
      * @param player whose cards
      */
-    public void displayCards(HBox pane, Player player, String type) {
+    public void displayCards(StackPane pane, Player player, String type) {
 //        if(type.equals("computer")){
 //            player.flipHand(player.getHand());
 //        }
         System.out.println("InsideDsplay cards");
         pane.getChildren().clear();
-        int count = 1;
+        int count = (-this.getWidth() / 2) + 150;
         for (Card card : player.getHand()) {
-
-            card.getImage().setTranslateX(60 + (count));
+            if (player.getHandSize() > 10) {
+                card.getImage().setTranslateX(count / 3);
+            } else {
+                card.getImage().setTranslateX(count);
+            }
+            pane.setAlignment(Pos.CENTER);
+//            pane.setPadding(new Insets(0,0,0,100));
             pane.getChildren().add(card.getImage());
-            count += 20;
+//            pane.setAlignment(Pos.CENTER);
+            count += 50;
+
+//        System.out.println("Count"+ count);
         }
 
     }
@@ -254,9 +290,9 @@ public class GoFishUI {
 //        player.getDeck().flipDeck(false);
         int count = 1;
         for (Card card : player.getDeck().getCards()) {
-
+//card.getImage().setTranslateX(count/3);
             pane.getChildren().add(card.getImage());
-//                count+=10;
+            count += 10;
         }
     }
 
@@ -313,66 +349,188 @@ public class GoFishUI {
     public int getHeigth() {
         return this.paneHeight;
     }
+
     /**
      * The deck pane with cards
-     * @return deck 
+     *
+     * @return deck
      */
     public Pane getDeckPane() {
         return this.deckPane;
     }
+
     /**
      * This returns the main game pane
+     *
      * @return pane with game
      */
-    public BorderPane getGamePane(){
+    public BorderPane getGamePane() {
         return this.gamePane;
     }
-    public void setAboutPane(BorderPane about){
+
+    public void setAboutPane(BorderPane about) {
         this.aboutPane = about;
     }
+
     /**
      * This returns the about pane with htlm
-     * @return about 
+     *
+     * @return about
      */
-    public BorderPane getAboutPane(){
+    public BorderPane getAboutPane() {
         return this.aboutPane;
     }
-    public void setSplashScreen(Pane splashScreenPane){
+
+    public void setSplashScreen(Pane splashScreenPane) {
         this.splashScreenPane = splashScreenPane;
     }
-    public Pane getSplashScreenPane(){
+
+    public Pane getSplashScreenPane() {
         return this.splashScreenPane;
     }
+
     /**
      * Randomly chooses who starts
      *
      * @return player or computer
      */
     public String whoStarts() {
-        String[] player = {"human", "computer"};
-        int who = new Random().nextInt(2);
+        String[] player = {"player", "computer"};
+        int who = new Random().nextInt(1);
         return player[who];
     }
-    public void setMainPane(BorderPane mainPane){
+
+    public void setMainPane(BorderPane mainPane) {
         this.mainPane = mainPane;
     }
-        public BorderPane getInstance() {
+
+    public BorderPane getInstance() {
         if (mainPane == null) {
             mainPane = new BorderPane();
-            
+
         }
         return mainPane;
     }
-        public void gamePlay(String playerType){
-            while(!human.isItOver()&&!computer.isItOver()){
-            human.getCardToHandFromDeck();
-            human.checkMatchingFour();
-//        computer.getCardToHandFromDeck();
-            displayCards(playerBox, human, "human");
-            displayCards(computerBox, computer, "computer");
-            updateDeck(deckPane, computer);
-                System.out.println("Not over yet");
+/**
+ * Game play
+ * @param playerType who starts first 
+ */
+    public void gamePlay(String playerType) {
+        while (!isOver) {
+            if ("computer".equals(playerType)) {
+                System.out.println("If computer: " + playerType);
+                computer.setIsTurn(true);
+                human.setIsTurn(false);
+            } else {
+                System.out.println("If Player: " + playerType);
+                computer.setIsTurn(false);
+                human.setIsTurn(true);
+            }
+            while (human.isTurn()) {
+                System.out.println("Inside player");
+                playerLabel.setText("Please input guess from hand and press \"Ask\".");
+                askComputerButton.setOnMouseClicked(e -> {
+                    eventHandler.requestToAskButton();
+                });
+                human.setIsTurn(false);
+            }
+            while (computer.isTurn()) {
+                System.out.println("Inside computer");
 
             }
+            isOver = true;
         }
+    }
+
+    public StackPane getPlayerPane() {
+        return playerPane;
+    }
+
+    public StackPane getComputerPane() {
+        return computerPane;
+    }
+
+    public Pane getAskPane() {
+        return askPane;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public int getPaneWidth() {
+        return paneWidth;
+    }
+
+    public int getPaneHeight() {
+        return paneHeight;
+    }
+
+    public Button getPlay() {
+        return play;
+    }
+
+    public Button getExit() {
+        return exit;
+    }
+
+    public Button getAbout() {
+        return about;
+    }
+
+    public Button getAskComputerButton() {
+        return askComputerButton;
+    }
+
+    public Button getYesBtn() {
+        return yesBtn;
+    }
+
+    public Button getGofishBtn() {
+        return gofishBtn;
+    }
+
+    public TextField getDecisionBoxTextField() {
+        return decisionBoxTextField;
+    }
+
+    public Player getHuman() {
+        return human;
+    }
+
+    public Computer getComputer() {
+        return computer;
+    }
+
+    public Label getComputerLabel() {
+        return computerLabel;
+    }
+
+    public Label getPlayerLabel() {
+        return playerLabel;
+    }
+
+    public int getNumberOfCardsPerPlayer() {
+        return numberOfCardsPerPlayer;
+    }
+
+    public EventHandler getEventHandler() {
+        return eventHandler;
+    }
+
+    public WebView getBrowser() {
+        return browser;
+    }
+
+    public WebEngine getWebEngine() {
+        return webEngine;
+    }
+
+    public String getWhoseTurn() {
+        return whoseTurn;
+    }
+
+    public boolean isIsOver() {
+        return isOver;
+    }
 }
