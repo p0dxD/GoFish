@@ -18,10 +18,12 @@ public class Computer extends Player{
     }
     public Computer(int i){
         super(i);
-        super.flipHand();
+//        super.flipHand();
     }
     
     public String makeMove(){
+        //(char)('a' + Math.random() * ('z'-'a' + 1)
+        //char from a -z randomly
         pick = null;
         String[] cardOptions = {"A", "2", "3", "4", "5",
             "6", "7", "8", "9", "10", "J", "Q", "K"};
@@ -34,8 +36,9 @@ public class Computer extends Player{
         }
         return pick;
     }
-
+    
     public String message(){
+
         return message;
     }
 }

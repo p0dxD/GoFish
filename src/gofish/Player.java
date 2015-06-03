@@ -177,8 +177,10 @@ public class Player {
      *
      * @param cards
      * @param player
+     * @return 
      */
-    public void checkMatchingFour() {
+    public boolean hasMatchingFour() {
+        boolean hadFour = false;
         System.out.println("Inside check");
         String[] cardOptions = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
         int max = 4;//matches needed
@@ -204,10 +206,11 @@ public class Player {
                 System.out.print("Key: " + key);
                 removeFromHand(key);
                 System.out.println(" value " + value);
+                hadFour = true;
                 score++;
             }
         }
-
+        return hadFour;
     }
     public boolean isItOver(){
         if(this.getHand().isEmpty()&&this.getDeckSize()==0){

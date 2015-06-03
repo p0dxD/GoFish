@@ -143,8 +143,11 @@ public class GoFishUI {
         exit.setTooltip(new Tooltip("Click here to exit"));
         //Sets the action for play button
         play.setOnMouseClicked(e -> {
+//                    while (!isOver) {
             eventHandler.requestToPlay();
             eventHandler.startGame(this.whoStarts());
+//                    }
+            getDecisionBoxTextField().requestFocus();
         });
         //sets the action for about button
         about.setOnMouseClicked(e -> {
@@ -198,7 +201,7 @@ public class GoFishUI {
         decisionBoxTextField.setTranslateX((this.getWidth() / 150));
         decisionBoxTextField.setTranslateY(this.getHeigth() - 300);
         decisionBoxTextField.setPrefSize(50, 15);
-            
+
         decisionBoxTextField.requestFocus();
         askPane.getChildren().addAll(askComputerButton, decisionBoxTextField,
                 yesBtn, gofishBtn, computerLabel, playerLabel);
@@ -396,7 +399,7 @@ public class GoFishUI {
      */
     public String whoStarts() {
         String[] player = {"player", "computer"};
-        int who = new Random().nextInt(1);
+        int who = new Random().nextInt(2);
         return player[who];
     }
 
@@ -411,35 +414,28 @@ public class GoFishUI {
         }
         return mainPane;
     }
-/**
- * Game play
- * @param playerType who starts first 
- */
-    public void gamePlay(String playerType) {
-        while (!isOver) {
-            if ("computer".equals(playerType)) {
-                System.out.println("If computer: " + playerType);
-                computer.setIsTurn(true);
-                human.setIsTurn(false);
-            } else {
-                System.out.println("If Player: " + playerType);
-                computer.setIsTurn(false);
-                human.setIsTurn(true);
-            }
-            while (human.isTurn()) {
-                System.out.println("Inside player");
-                playerLabel.setText("Please input guess from hand and press \"Ask\".");
-                askComputerButton.setOnMouseClicked(e -> {
-                    eventHandler.requestToAskButton();
-                });
-                human.setIsTurn(false);
-            }
-            while (computer.isTurn()) {
-                System.out.println("Inside computer");
 
-            }
-            isOver = true;
+    /**
+     * Game play
+     *
+     * @param playerType who starts first
+     */
+    public void gamePlay(String playerType) {
+
+        if ("computer".equals(playerType)) {
+            System.out.println("If computer: " + playerType);
+            eventHandler.processComputerTurn();
+            computer.setIsTurn(true);
+            human.setIsTurn(false);
+        } else {
+//        playerLabel.setText("Please input guess from hand and press \"Ask\".");
+            System.out.println("If Player: " + playerType);
+            eventHandler.processPlayerTurn();
+            computer.setIsTurn(false);
+            human.setIsTurn(true);
         }
+
+
     }
 
     public StackPane getPlayerPane() {

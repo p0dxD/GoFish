@@ -67,7 +67,7 @@ public class DeckTest extends Application {
         System.out.println("Score com: "+computer.getScore());
 //        System.out.println("Score player: "+player.getScore());
         computer.getCardToHandFromDeck();
-        computer.checkMatchingFour();
+        computer.hasMatchingFour();
         System.out.println("won: "+won(computer));
        display(computer,computer.getHand(),root);
 //        computer.increaseScore();
